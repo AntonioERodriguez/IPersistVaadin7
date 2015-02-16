@@ -1,0 +1,9 @@
+@import "addons.scss";
+@import "ipersistvaadin7.scss";
+
+/* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
+/* The actual styles should be defined in ipersistvaadin7.scss */
+.ipersistvaadin7 {
+  @include addons;
+  @include ipersistvaadin7;
+}
