@@ -24,9 +24,14 @@ CREATE TABLE ACTION
 	GOAL_ID int NOT NULL,
 	NAME varchar(50) NOT NULL,
 	COMMENTS varchar(255),
+	-- how many units of this task need be done periodically (for example, read 30 minutes every day)
 	QUANTITY_COMMITTED int NOT NULL,
-	UNIT_ID int NOT NULL,
+	-- To allow to create tasks that do not need to occur every single day, but still need to be periodic (for example, go to the gym 3 times every 7 days); a value of zero would mean this task needs to be done only once
+	PERIODICITY_IN_DAYS int NOT NULL,
+	-- how many units (same type of unit) are estimated to be required to accomplish this goal (for example, read 720 minutes, or about 12 hours)
 	REQUIRED_BY_GOAL int NOT NULL,
+	-- units in which this task is measured (for example, read for 30 minutes, the unit is minutes); use a unit that will allow to use integer values for the quantities
+	UNIT_ID int NOT NULL,
 	STATUS tinyint NOT NULL,
 	PRIMARY KEY (ACTION_ID),
 	UNIQUE (ACTION_ID),
@@ -199,7 +204,7 @@ ALTER TABLE JOURNAL
 ;
 
 
-ALTER TABLE BENEFIT
+ALTER TABLE ACTION
 	ADD FOREIGN KEY (GOAL_ID)
 	REFERENCES GOAL (GOAL_ID)
 	ON UPDATE RESTRICT
@@ -215,7 +220,7 @@ ALTER TABLE TREAT
 ;
 
 
-ALTER TABLE ACTION
+ALTER TABLE BENEFIT
 	ADD FOREIGN KEY (GOAL_ID)
 	REFERENCES GOAL (GOAL_ID)
 	ON UPDATE RESTRICT
@@ -255,6 +260,14 @@ ALTER TABLE ADVISOR
 ;
 
 
+ALTER TABLE ADVISOR
+	ADD CONSTRAINT CT_SUPERVISOR FOREIGN KEY (SUPERVISOR_ID)
+	REFERENCES PERSON (PERSON_ID)
+	ON UPDATE RESTRICT
+	ON DELETE RESTRICT
+;
+
+
 ALTER TABLE GOAL
 	ADD FOREIGN KEY (PERSON_ID)
 	REFERENCES PERSON (PERSON_ID)
@@ -265,14 +278,6 @@ ALTER TABLE GOAL
 
 ALTER TABLE EMAIL_LINK
 	ADD FOREIGN KEY (FROM_PERSON_ID)
-	REFERENCES PERSON (PERSON_ID)
-	ON UPDATE RESTRICT
-	ON DELETE RESTRICT
-;
-
-
-ALTER TABLE ADVISOR
-	ADD CONSTRAINT CT_SUPERVISOR FOREIGN KEY (SUPERVISOR_ID)
 	REFERENCES PERSON (PERSON_ID)
 	ON UPDATE RESTRICT
 	ON DELETE RESTRICT
